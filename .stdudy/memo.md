@@ -3,7 +3,7 @@
 - [1. pythonの出力方法](#1-pythonの出力方法)
   - [1.1. バッファリングしないための設定](#11-バッファリングしないための設定)
   - [1.2. Dockerfileのpyproject.tomlの設定変更方法](#12-dockerfileのpyprojecttomlの設定変更方法)
-  - [1.3. TODO](#13-todo)
+  - [1.3. dockerfileのファイルの有無について](#13-dockerfileのファイルの有無について)
 - [2. markdownのショートカットを勉強したり追加したり](#2-markdownのショートカットを勉強したり追加したり)
   - [2.1. 勉強した内容](#21-勉強した内容)
   - [2.2. ショートカットの追加](#22-ショートカットの追加)
@@ -39,7 +39,14 @@ RUN poetry config virtualenvs.in-project true
 RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
 ```
 
-### 1.3. TODO
+### 1.3. dockerfileのファイルの有無について
+
+`COPY pyproject.toml*poetry.lock* ./`のアスタリスク（*）は、ファイル名の後にワイルドカードを指定することで、これらのファイルが存在するかどうかに関わらずコピーしようとする操作を可能にしています。
+
+```bash
+# poetryの定義ファイルをコピー (存在する場合)
+COPY pyproject.toml* poetry.lock* ./
+```
 
 ## 2. markdownのショートカットを勉強したり追加したり
 
@@ -66,9 +73,9 @@ RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
   - Markdown All in One: Toggle list
 - Ctrl + Alt + 5
   - Markdown All in One: Toggle Strikethrough
-- Ctrl + Alt + 7
+- Shift + Alt + 7
   - Markdown All in One: Toggle code span
-- Ctrl + Alt + 8
+- Shift + Alt + 8
   - Markdown All in One: Toggle code block
 
 ![ショートカット](ショートカット情報.png)
