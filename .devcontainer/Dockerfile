@@ -1,31 +1,37 @@
-# Python 3.11 のイメージをベースに使用
-FROM python:3.11-buster
+# FROM mcr.microsoft.com/devcontainers/base:jammy
+FROM mcr.microsoft.com/devcontainers/python:1-3.11-bookworm
 
 # 環境変数の設定 (出力を即時反映)
 ENV PYTHONUNBUFFERED=1
 
-# 作業ディレクトリの設定
-WORKDIR /src
+# Update package lists
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get -y install --no-install-recommends \
+    curl \
+    git \
+    vim \
+    less \
+    gcc && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# 必要なパッケージをインストール (curl, git, docker CLI)
-# RUN apt-get update && apt-get install -y \
-#     curl \
-#     git
+# setup git branch in console
+RUN echo "source /usr/share/bash-completion/completions/git" >> /home/${USERNAME}/.bashrc
 
-# docker.io && \
-# apt-get clean && rm -rf /var/lib/apt/lists/*
+WORKDIR /usr/share/bash-completion/completions
 
-# pip で Poetry をインストール
+RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+
+RUN chmod a+x git*.*
+
+# pipを使ってpoetryをインストール
 RUN pip install poetry
 
-# Poetry の設定 (仮想環境をプロジェクト内に作成)
-RUN poetry config virtualenvs.in-project true
-
-# Poetry の定義ファイルをコピー (存在する場合)
+# poetryの定義ファイルをコピー (存在する場合)
 COPY pyproject.toml* poetry.lock* ./
 
-# Poetry で依存パッケージをインストール (pyproject.toml が存在する場合)
+# poetryでライブラリをインストール (pyproject.tomlが既にある場合)
+RUN poetry config virtualenvs.in-project true
 RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
-
-# # デフォルトのコマンドは bash を起動 (開発用)
-# CMD ["/bin/bash"]
