@@ -28,13 +28,13 @@
 					"editor.formatOnSave": true,
 					"editor.codeActionsOnSave": {
 						"source.organizeImports": "explicit"
-					},
+					}
 				},
 				"isort.args": [
 					"--profile",
 					"black"
 				],
-				"autoDocstring.docstringFormat": "google",
+				"autoDocstring.docstringFormat": "google"
 			},
 			"extensions": [
 				"charliermarsh.ruff",

@@ -11,6 +11,32 @@ fastapi = "^0.115.0"
 uvicorn = {extras = ["standard"], version = "^0.31.0"}
 
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6.9"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+# Ruffの一般設定
+line-length = 112
+
+# 対象にするルールセットを指定（必要に応じて有効/無効にするルールを追加）
+select = ["E", "F", "B", "W", "I", "N", "D", "UP", "RUF"]
+ignore = ["B008", "D100", "D101", "D400", "D415", "RUF002", "RUF003"]
+
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+unfixable = ["F401"]
+
+[tool.mypy]
+# Mypyの一般設定
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_calls = true
+ignore_missing_imports = true
+
+
