@@ -30,10 +30,6 @@
 						"source.organizeImports": "explicit"
 					}
 				},
-				"isort.args": [
-					"--profile",
-					"black"
-				],
 				"autoDocstring.docstringFormat": "google"
 			},
 			"extensions": [
