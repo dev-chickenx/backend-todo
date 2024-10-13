@@ -11,6 +11,7 @@ fastapi = "^0.115.0"
 uvicorn = {extras = ["standard"], version = "^0.31.0"}
 sqlalchemy = "^2.0.35"
 pymysql = "^1.1.1"
+aiomysql = "^0.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -27,7 +28,7 @@ line-length = 112
 
 # 対象にするルールセットを指定（必要に応じて有効/無効にするルールを追加）
 select = ["E", "F", "B", "W", "I", "N", "D", "UP", "RUF"]
-ignore = ["B008", "D100", "D101", "D400", "D415", "RUF002", "RUF003"]
+ignore = ["B008", "D100", "D101", "D400", "D413", "D415", "RUF002", "RUF003"]
 
 
 [tool.ruff.lint]

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 import api.cruds.task as task_crud
@@ -19,26 +20,26 @@ async def list_tasks(db: Session = Depends(get_db)):
     Returns:
         list[tuple[int, str, bool]]: タスクの一覧情報
     """
-    return task_crud.get_tasks_with_done(db)
+    return await task_crud.get_tasks_with_done(db)
 
 
 @router.post("/tasks", response_model=task_schema.TaskCreateResponse)
-async def create_task(task_body: task_schema.TaskCreate, db: Session = Depends(get_db)) -> task_model.Task:
+async def create_task(task_body: task_schema.TaskCreate, db: AsyncSession = Depends(get_db)) -> task_model.Task:
     """タスクを作成します。
 
     Args:
         task_body (task_schema.TaskCreate): タスク情報
-        db (Session, optional): セッション. Defaults to Depends(get_db).
+        db (AsyncSession, optional): セッション. Defaults to Depends(get_db).
 
     Returns:
         task_model.Task: タスク情報
     """
-    return task_crud.create_task(db, task_body)
+    return await task_crud.create_task(db, task_body)
 
 
 @router.put("/tasks/{task_id}", response_model=task_schema.TaskCreateResponse)
 async def update_task(
-    task_id: int, task_body: task_schema.TaskCreate, db: Session = Depends(get_db)
+    task_id: int, task_body: task_schema.TaskCreate, db: AsyncSession = Depends(get_db)
 ) -> task_model.Task:
     """タスクを更新します。
 
@@ -53,15 +54,15 @@ async def update_task(
     Returns:
         task_model.Task: タスク情報
     """
-    task = task_crud.get_task(db, task_id=task_id)
+    task = await task_crud.get_task(db, task_id=task_id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    return task_crud.update_task(db, task_body, original=task)
+    return await task_crud.update_task(db, task_body, original=task)
 
 
 @router.delete("/tasks/{task_id}", response_model=None)
-async def delete_task(task_id: int, db: Session = Depends(get_db)) -> None:
+async def delete_task(task_id: int, db: AsyncSession = Depends(get_db)) -> None:
     """タスクを削除します。
 
     Args:
@@ -74,8 +75,8 @@ async def delete_task(task_id: int, db: Session = Depends(get_db)) -> None:
     Returns:
         None: None
     """
-    task = task_crud.get_task(db, task_id=task_id)
+    task = await task_crud.get_task(db, task_id=task_id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    return task_crud.delete_task(db, original=task)
+    return await task_crud.delete_task(db, original=task)
