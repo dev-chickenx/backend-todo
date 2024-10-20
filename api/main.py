@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from api.routers import done, task
+from api.routers import task
 
 app = FastAPI()
 
@@ -11,4 +11,3 @@ async def hello():
 
 
 app.include_router(task.router)
-app.include_router(done.router)

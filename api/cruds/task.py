@@ -1,7 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
 import api.models.task as task_model
 import api.schemas.task as task_schema
@@ -33,7 +32,7 @@ async def get_task(db: AsyncSession, task_id: int) -> task_model.Task | None:
 
 
 async def update_task(
-    db: AsyncSession, task_create: task_schema.TaskCreate, original: task_model.Task
+    db: AsyncSession, task_create: task_schema.TaskUpdate, original: task_model.Task
 ) -> task_model.Task:
     if task_create.title is not None:
         original.title = task_create.title
