@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
 import api.cruds.task as task_crud
 import api.models.task as task_model
@@ -11,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("/tasks", response_model=list[task_schema.Task])
-async def list_tasks(db: Session = Depends(get_db)):
+async def list_tasks(db: AsyncSession = Depends(get_db)):
     """タスク一覧
 
     Args:
