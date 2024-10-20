@@ -1,8 +1,11 @@
-from pydantic import BaseModel, Field
+import datetime
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TaskBase(BaseModel):
     title: str | None = Field(None, examples=["クリーニングを取りに行く"])
+    due_date: datetime.date | None = Field(None, examples=["2021-08-01"])
 
 
 class TaskCreate(TaskBase):
@@ -12,13 +15,11 @@ class TaskCreate(TaskBase):
 class TaskCreateResponse(TaskBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Task(TaskBase):
     id: int
     done: bool = Field(False, description="完了フラグ")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
