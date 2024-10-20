@@ -1,37 +1,41 @@
-# FROM mcr.microsoft.com/devcontainers/base:jammy
-FROM mcr.microsoft.com/devcontainers/python:1-3.11-bookworm
+# ベースイメージの指定
+FROM mcr.microsoft.com/devcontainers/base:jammy
 
-# 環境変数の設定 (出力を即時反映)
-ENV PYTHONUNBUFFERED=1
+# 環境変数の設定
+ARG DEBIAN_FRONTEND=noninteractive
+ARG USER=vscode
+ARG PYTHON_VERSION=3.11
 
-# Update package lists
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get -y install --no-install-recommends \
-    curl \
+# システムパッケージのインストール
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
     git \
-    vim \
-    less \
-    gcc && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    wget \
+    curl \
+    llvm \
+    libncurses5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev\
+    python${PYTHON_VERSION} python3-pip \
+    bash-completion \
+    && ln -s /usr/bin/python3 /usr/bin/python
 
-# setup git branch in console
-RUN echo "source /usr/share/bash-completion/completions/git" >> /home/${USERNAME}/.bashrc
+# ユーザーの設定
+USER $USER
+ARG HOME="/home/$USER"
 
-WORKDIR /usr/share/bash-completion/completions
-
-RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
-RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
-
-RUN chmod a+x git*.*
-
-# pipを使ってpoetryをインストール
-RUN pip install poetry
-
-# poetryの定義ファイルをコピー (存在する場合)
-COPY pyproject.toml* poetry.lock* ./
-
-# poetryでライブラリをインストール (pyproject.tomlが既にある場合)
-RUN poetry config virtualenvs.in-project true
-RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
+# poetryのインストール & アクティベート
+ENV PATH="${HOME}/.local/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | python3 - \
+    && poetry config virtualenvs.in-project true \
+    && echo 'source ./.venv/bin/activate' >> ~/.bashrc
