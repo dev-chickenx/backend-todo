@@ -1,6 +1,7 @@
 """Script to export the ReDoc documentation page into a standalone HTML file."""
 
 import json
+from datetime import datetime
 
 from api.main import app
 
@@ -32,5 +33,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 """
 
 if __name__ == "__main__":
-    with open(f"api-docs-my-project.html", "w") as fd:
+    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"docs/api-docs_{current_time}.html"
+
+    with open(filename, "w") as fd:
         print(HTML_TEMPLATE % json.dumps(app.openapi()), file=fd)
