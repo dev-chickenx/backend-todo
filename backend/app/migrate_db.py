@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 
-from api.models.task import Base
+from app.models.task import Base
 
 DB_DIALECT = "mysql"
 DB_DRIVER = "pymysql"

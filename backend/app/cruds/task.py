@@ -2,11 +2,13 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import api.models.task as task_model
-import api.schemas.task as task_schema
+import app.models.task as task_model
+import app.schemas.task as task_schema
 
 
-async def create_task(db: AsyncSession, task_create: task_schema.TaskCreate) -> task_model.Task:
+async def create_task(
+    db: AsyncSession, task_create: task_schema.TaskCreate
+) -> task_model.Task:
     """Create a new task in the database.
 
     Args:
@@ -64,12 +66,16 @@ async def get_task(db: AsyncSession, task_id: int) -> task_model.Task | None:
         task_model.Task | None: 指定されたIDに対応するタスクが存在する場合はタスクオブジェクトを返し、
                                 存在しない場合は None を返します。
     """
-    result: Result = await db.execute(select(task_model.Task).filter(task_model.Task.id == task_id))
+    result: Result = await db.execute(
+        select(task_model.Task).filter(task_model.Task.id == task_id)
+    )
     return result.scalars().first()
 
 
 async def update_task(
-    db: AsyncSession, task_update_schema: task_schema.TaskUpdate, original: task_model.Task
+    db: AsyncSession,
+    task_update_schema: task_schema.TaskUpdate,
+    original: task_model.Task,
 ) -> task_model.Task:
     """指定されたタスクを更新し、データベースに保存します。
 

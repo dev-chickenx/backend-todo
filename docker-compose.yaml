@@ -1,14 +1,13 @@
 version: '3'
 services:
   demo-app:
-    build: .
-    volumes:
-      - .dockervenv:/src/.venv
-      - .:/src
+    build: ./backend
+    # volumes: # - ./backend/app:/app/app/
     ports:
       - 8000:8000 # ホストマシンのポート8000を、docker内のポート8000に接続する
     environment:
       - WATCHFILES_FORCE_POLLING=true # 環境によってホットリロードのために必要
+    command: poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
   db:
     image: mysql:8.4

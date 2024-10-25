@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import api.cruds.task as task_crud
-import api.models.task as task_model
-import api.schemas.task as task_schema
-from api.db import get_db
+import app.cruds.task as task_crud
+import app.models.task as task_model
+import app.schemas.task as task_schema
+from app.db import get_db
 
 router = APIRouter()
 
@@ -36,7 +36,9 @@ async def get_tasks_info(db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/tasks", response_model=task_schema.TaskCreateResponse)
-async def create_task(task_body: task_schema.TaskCreate, db: AsyncSession = Depends(get_db)) -> task_model.Task:
+async def create_task(
+    task_body: task_schema.TaskCreate, db: AsyncSession = Depends(get_db)
+) -> task_model.Task:
     """タスクを作成します。
 
     Args:

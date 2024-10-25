@@ -7,8 +7,8 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from api.db import Base, get_db
-from api.main import app
+from app.db import Base, get_db
+from app.main import app
 
 ASYNC_DB_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -17,7 +17,9 @@ ASYNC_DB_URL = "sqlite+aiosqlite:///:memory:"
 async def async_client() -> AsyncGenerator[AsyncClient, None]:
     # 非同期対応したDB接続用のengineとsessionを作成
     async_engine = create_async_engine(ASYNC_DB_URL, echo=True)
-    async_session = sessionmaker(autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession)
+    async_session = sessionmaker(
+        autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession
+    )
     # テスト用にオンメモリのSQLiteテーブルを初期化（関数ごとにリセット）
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
@@ -31,7 +33,9 @@ async def async_client() -> AsyncGenerator[AsyncClient, None]:
     app.dependency_overrides[get_db] = get_test_db
 
     # テスト用に非同期HTTPクライアントを返却
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
         yield client
 
 
@@ -85,5 +89,7 @@ async def test_done_flag(async_client):
     ],
 )
 async def test_due_date(input_param, expectation, async_client):
-    response = await async_client.post("/tasks", json={"title": "テストタスク", "due_date": input_param})
+    response = await async_client.post(
+        "/tasks", json={"title": "テストタスク", "due_date": input_param}
+    )
     assert response.status_code == expectation

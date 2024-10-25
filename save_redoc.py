@@ -3,7 +3,7 @@
 import json
 from datetime import datetime
 
-from api.main import app
+from app.main import app
 
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html>
