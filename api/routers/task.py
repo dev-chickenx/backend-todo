@@ -9,8 +9,8 @@ from api.db import get_db
 router = APIRouter()
 
 
-@router.get("/tasks", response_model=list[task_schema.Task])
-async def list_tasks(db: AsyncSession = Depends(get_db)):
+@router.get("/tasks", response_model=list[task_schema.TaskCreateResponse])
+async def get_tasks(db: AsyncSession = Depends(get_db)):
     """タスク一覧
 
     Args:
@@ -19,7 +19,20 @@ async def list_tasks(db: AsyncSession = Depends(get_db)):
     Returns:
         list[tuple[int, str, bool]]: タスクの一覧情報
     """
-    return await task_crud.get_tasks_with_done(db)
+    return await task_crud.get_tasks(db)
+
+
+@router.get("/tasks_all_info", response_model=list[task_schema.Task])
+async def get_tasks_info(db: AsyncSession = Depends(get_db)):
+    """タスク一覧
+
+    Args:
+        db (Session, optional): セッション. Defaults to Depends(get_db).
+
+    Returns:
+        list[tuple[int, str, bool]]: タスクの一覧情報
+    """
+    return await task_crud.get_tasks_with_datetime(db)
 
 
 @router.post("/tasks", response_model=task_schema.TaskCreateResponse)
@@ -38,13 +51,13 @@ async def create_task(task_body: task_schema.TaskCreate, db: AsyncSession = Depe
 
 @router.put("/tasks/{task_id}", response_model=task_schema.TaskCreateResponse)
 async def update_task(
-    task_id: int, task_body: task_schema.TaskCreate, db: AsyncSession = Depends(get_db)
+    task_id: int, task_body: task_schema.TaskUpdate, db: AsyncSession = Depends(get_db)
 ) -> task_model.Task:
     """タスクを更新します。
 
     Args:
         task_id (int): タスクID
-        task_body (task_schema.TaskCreate): タスク情報
+        task_body (task_schema.TaskUpdate): タスク情報
         db (Session, optional): セッション. Defaults to Depends(get_db).
 
     Raises:
