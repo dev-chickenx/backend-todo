@@ -15,10 +15,10 @@ class Task(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(1024))
     done = Column(Boolean, default=False)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    created_at = Column(DateTime, default=func.now(), server_default=func.now(), nullable=False)
     updated_at = Column(
         DateTime,
-        default=lambda: datetime.now(dt),
-        onupdate=lambda: datetime.now(dt),
+        default=func.now(),
+        onupdate=func.now(),
         nullable=False,
     )

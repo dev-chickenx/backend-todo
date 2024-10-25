@@ -39,7 +39,7 @@ class Task(TaskBase):
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(dt), examples=["2021-08-01T00:00:00+09:00"]
     )
-    updated_at: datetime | None = Field(
+    updated_at: datetime = Field(
         default_factory=lambda: datetime.now(dt), examples=["2021-08-01T00:00:00+09:00"]
     )
 
