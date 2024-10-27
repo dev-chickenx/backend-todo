@@ -7,14 +7,14 @@ import api.schemas.task as task_schema
 
 
 async def create_task(db: AsyncSession, task_create: task_schema.TaskCreate) -> task_model.Task:
-    """Create a new task in the database.
+    """データベースに新しいタスクを作成します。
 
     Args:
-        db (AsyncSession): The database session.
-        task_create (task_schema.TaskCreate): The task data to create.
+        db (AsyncSession): データベースセッション。
+        task_create (task_schema.TaskCreate): 作成するタスクのデータ。
 
     Returns:
-        task_model.Task: The created task.
+        task_model.Task: 作成されたタスク。
     """
     task = task_model.Task(**task_create.model_dump())
     db.add(task)
@@ -24,14 +24,14 @@ async def create_task(db: AsyncSession, task_create: task_schema.TaskCreate) -> 
 
 
 async def get_tasks(db: AsyncSession) -> list[task_schema.TaskCreateResponse]:
-    """Retrieve all tasks with their done status.
+    """すべてのタスクをその完了ステータスと共に取得します。
 
     必要のないカラムも取得して、return時にPydanticスキーマに変換している。最適化する場合は、selectの最適化をする。
     Args:
-        db (AsyncSession): The database session.
+        db (AsyncSession): データベースセッション。
 
     Returns:
-        list[task_schema.TaskCreateResponse]: A list of tasks with their done status.
+        list[task_schema.TaskCreateResponse]: 完了ステータスを含むタスクのリスト。
     """
     result: Result = await db.execute(select(task_model.Task))
     tasks = result.scalars().all()
