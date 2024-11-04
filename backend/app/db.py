@@ -1,6 +1,6 @@
 from sqlalchemy.engine import URL
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import declarative_base
 
 DB_DIALECT = "mysql"
 DB_DRIVER = "aiomysql"
@@ -24,12 +24,19 @@ ASYNC_DB_URL = URL.create(
 
 
 async_engine = create_async_engine(ASYNC_DB_URL, echo=True)
-async_session = sessionmaker(bind=async_engine, autoflush=False, expire_on_commit=False, class_=AsyncSession)
+async_session = async_sessionmaker(
+    bind=async_engine, autoflush=False, expire_on_commit=False, class_=AsyncSession
+)
 
 
 Base = declarative_base()
 
 
 async def get_db():
+    """データベースセッションを提供する非同期ジェネレーター関数。
+
+    Yields:
+        AsyncSession: 非同期データベースセッションのインスタンス。
+    """
     async with async_session() as session:
         yield session

@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.engine import Result
+from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import app.models.task as task_model
@@ -18,8 +19,14 @@ async def create_task(db: AsyncSession, task_create: task_schema.TaskCreate) -> 
     """
     task = task_model.Task(**task_create.model_dump())
     db.add(task)
-    await db.commit()
-    await db.refresh(task)
+    try:
+        await db.commit()
+        await db.refresh(task)
+    except (DataError, IntegrityError) as e:
+        await db.rollback()  # エラー発生時はロールバック
+        # エラーメッセージのログ出力やクライアントへのエラーレスポンスを送信
+        print(f"エラー: {e}")
+        raise ValueError("タイトルが長すぎます。最大1024文字以内にしてください。") from e
     return task
 
 

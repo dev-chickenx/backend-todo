@@ -36,9 +36,7 @@ async def get_tasks_info(db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/tasks", response_model=task_schema.TaskCreateResponse)
-async def create_task(
-    task_body: task_schema.TaskCreate, db: AsyncSession = Depends(get_db)
-) -> task_model.Task:
+async def create_task(task_body: task_schema.TaskCreate, db: AsyncSession = Depends(get_db)) -> task_model.Task:
     """タスクを作成します。
 
     Args:
@@ -48,7 +46,12 @@ async def create_task(
     Returns:
         task_model.Task: タスク情報
     """
-    return await task_crud.create_task(db, task_body)
+    try:
+        return await task_crud.create_task(db, task_body)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.put("/tasks/{task_id}", response_model=task_schema.TaskCreateResponse)
@@ -73,6 +76,27 @@ async def update_task(
         raise HTTPException(status_code=404, detail="Task not found")
 
     return await task_crud.update_task(db, task_body, original=task)
+
+
+@router.get("/tasks/{task_id}", response_model=task_schema.Task)
+async def get_task(task_id: int, db: AsyncSession = Depends(get_db)) -> task_model.Task:
+    """タスクを取得します。
+
+    Args:
+        task_id (int): タスクID
+        db (AsyncSession, optional): セッション. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: 例外
+
+    Returns:
+        task_model.Task: タスク情報
+    """
+    task = await task_crud.get_task(db, task_id=task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    return task
 
 
 @router.delete("/tasks/{task_id}", response_model=None)

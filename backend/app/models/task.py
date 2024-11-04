@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
 from zoneinfo import ZoneInfo
 
@@ -15,9 +13,7 @@ class Task(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(1024))
     done = Column(Boolean, default=False)
-    created_at = Column(
-        DateTime, default=func.now(), server_default=func.now(), nullable=False
-    )
+    created_at = Column(DateTime, default=func.now(), server_default=func.now(), nullable=False)
     updated_at = Column(
         DateTime,
         default=func.now(),

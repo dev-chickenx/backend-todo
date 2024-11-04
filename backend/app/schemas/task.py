@@ -7,7 +7,7 @@ dt = ZoneInfo("Asia/Tokyo")
 
 
 class TaskBase(BaseModel):
-    title: str | None = Field(None, examples=["クリーニングを取りに行く"])
+    title: str | None = Field(None, examples=["クリーニングを取りに行く"], max_length=1024)
 
 
 class TaskCreate(TaskBase):
